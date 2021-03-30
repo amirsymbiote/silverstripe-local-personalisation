@@ -10,6 +10,20 @@ const MAX_TAGS = 50;
 
 const VERSION = 2;
 
+function ready(fn) {
+    if (document.readyState != 'loading') {
+        fn();
+    } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', fn);
+    } else {
+        document.attachEvent('onreadystatechange', function () {
+            if (document.readyState != 'loading') {
+                fn();
+            }
+        });
+    }
+}
+
 class Profile {
 
     /**
@@ -299,9 +313,15 @@ class Profile {
                     hideMatches
                 };
 
-                // trigger global event
-                console.log("Profile.js: Trigger local_profile_match_tag", tagDetail);
-                this.triggerEvent('local_profile_match_tag', tagDetail);
+                // trigger global event function
+                function profileMatchTag() {
+                    console.log("Profile.js: Trigger local_profile_match_tag", tagDetail);
+                    this.triggerEvent('local_profile_match_tag', tagDetail)
+                }
+
+                ready(
+                    profileMatchTag()
+                );
 
                 // checking explicit show/hide preference first, otherwise
                 // fall back to 'show' being higher preference than 'hide'
@@ -475,7 +495,10 @@ class Profile {
      */
     applyRule(rule, matchData) {
         if (rule.apply && rule.apply.length > 0) {
-            this.triggerEvent('local_profile_apply_rule', rule);
+            ready(
+                this.triggerEvent('local_profile_apply_rule', rule)
+            );
+
             // do some replacements for each match data
             for (let i = 0; i < rule.apply.length; i++) {
                 let tag = rule.apply[i];
@@ -515,7 +538,9 @@ class Profile {
             r: tag
         };
 
-        this.triggerEvent('local_profile_add_tag', newTag);
+        ready(
+            this.triggerEvent('local_profile_add_tag', newTag)
+        );
 
         existing.acc.unshift(newTag);
 
