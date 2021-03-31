@@ -11,6 +11,7 @@ const MAX_TAGS = 50;
 const VERSION = 2;
 
 function ready(fn) {
+    console.log("doing ready function");
     if (document.readyState != 'loading') {
         fn();
     } else if (document.addEventListener) {
